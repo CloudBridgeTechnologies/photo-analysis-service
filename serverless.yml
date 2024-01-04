@@ -1,0 +1,39 @@
+service: photo-analysis-service
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+  stage: production
+  region: eu-west-1
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - s3:*
+          Resource: "*"
+        - Effect: "Allow"
+          Action:
+            - "rekognition:*"
+          Resource: "*"   
+
+functions:
+  imageAnalysis:
+    handler: handler.imageAnalysis
+    events:
+      - s3:
+          bucket: cb-face-photo-bucket
+          event: s3:ObjectCreated:*
+          existing: true
+          rules:
+            - suffix: .png
+    environment:
+      FIXED_WIDTH_BUCKET: ${self:resources.Resources.fixedwidth.Properties.BucketName}
+      NODE_ENV: production
+
+resources:
+  Resources:
+    fixedwidth:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: cb-face-photo-bucket
