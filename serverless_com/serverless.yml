@@ -1,4 +1,4 @@
-service: photo-analysis-service
+service: photo-analysis-service-svrls
 
 provider:
   name: aws

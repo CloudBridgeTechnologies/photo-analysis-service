@@ -22,6 +22,7 @@
   "license": "ISC",
   "dependencies": {
     "fixy": "^1.2.0",
+    "aws-sdk": "^2.424.0",
     "papaparse": "^4.6.3"
   },
   "devDependencies": {

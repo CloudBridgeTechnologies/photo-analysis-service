@@ -3,14 +3,14 @@ Transform: AWS::Serverless-2016-10-31
 
 Globals:
   Function:
-    Runtime: nodejs20.x
+    Runtime: nodejs16.x
 
 Resources:
   ImageAnalysisFunction:
     Type: AWS::Serverless::Function
     Properties:
       Handler: handler.imageAnalysisAwsSam
-      Runtime: nodejs20.x
+      Runtime: nodejs16.x
       Environment:
         Variables:
           FIXED_WIDTH_BUCKET: 'cb-face-photo-bucket-aws-sam-version'
