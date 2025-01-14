@@ -5,6 +5,9 @@ provider:
   runtime: nodejs16.x
   stage: production
   region: eu-west-2
+  deploymentBucket:
+    name: "temp-staging-serverless-deployment"
+    serverSideEncryption: AES256
   iam:
     role:
       statements:
@@ -22,7 +25,7 @@ functions:
     handler: handler.imageAnalysis
     events:
       - s3:
-          bucket: cb-face-photo-bucket
+          bucket: cb-face-photo-bucket-serverless-version
           event: s3:ObjectCreated:*
           existing: true
           rules:
@@ -36,4 +39,4 @@ resources:
     fixedwidth:
       Type: AWS::S3::Bucket
       Properties:
-        BucketName: cb-face-photo-bucket
+        BucketName: cb-face-photo-bucket-serverless-version

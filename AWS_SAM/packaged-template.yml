@@ -2,30 +2,24 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Globals:
   Function:
-    Runtime: nodejs16.x
+    Runtime: nodejs20.x
 Resources:
   ImageAnalysisFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: handler.imageAnalysis
+      Handler: handler.imageAnalysisAwsSam
       Runtime: nodejs20.x
       Environment:
         Variables:
           FIXED_WIDTH_BUCKET: cb-face-photo-bucket-aws-sam-version
           NODE_ENV: production
       Events:
-        S3PhotoUploadEvent:
+        S3UploadEvent:
           Type: S3
           Properties:
             Bucket:
               Ref: FixedWidthBucket
-            Events:
-            - s3:ObjectCreated:*
-            Filter:
-              S3Key:
-                Rules:
-                - Name: suffix
-                  Value: .png
+            Events: s3:ObjectCreated:*
       Policies:
       - Version: '2012-10-17'
         Statement:
@@ -37,7 +31,7 @@ Resources:
           Action:
           - rekognition:*
           Resource: '*'
-      CodeUri: s3://aws-sam-demo-staging-area/4362b100acc778c18d2354e396611389
+      CodeUri: s3://aws-sam-demo-staging-area/caf7076208644a3240d32953e98ac51c
     Metadata:
       SamResourceId: ImageAnalysisFunction
   FixedWidthBucket:
@@ -46,3 +40,14 @@ Resources:
       BucketName: cb-face-photo-bucket-aws-sam-version
     Metadata:
       SamResourceId: FixedWidthBucket
+  BucketPermission:
+    Type: AWS::Lambda::Permission
+    DependsOn: FixedWidthBucket
+    Properties:
+      FunctionName:
+        Ref: ImageAnalysisFunction
+      Action: lambda:InvokeFunction
+      Principal: s3.amazonaws.com
+      SourceArn: arn:aws:s3:::cb-face-photo-bucket-aws-sam-version
+    Metadata:
+      SamResourceId: BucketPermission
